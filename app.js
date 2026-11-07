@@ -1,5 +1,5 @@
 // Frontend only. Language Schools = 100% English. Government = 100% Arabic.
-// Wrong-course and crash detection ("undefined 'id'", "COURSE_MISMATCH") is handled here — solvers untouched.
+// Wrong-course ("undefined 'id'") detection is done HERE only — solvers untouched.
 const API_BASE = new URLSearchParams(location.search).get('api')
   || localStorage.getItem('qureoApiBase')
   || '';
@@ -190,7 +190,6 @@ function applyLanguage(forceLang) {
   document.querySelectorAll('[data-i18n-placeholder]').forEach((element) => {
     element.placeholder = t(element.dataset.i18nPlaceholder);
   });
-  // re-render dynamic (non data-i18n) content in the new language too
   activitySignature = '';
   chaptersSignature = '';
   renderActivity(lastActivity);
@@ -459,20 +458,11 @@ function renderChapters(chapters) {
   chaptersBox.appendChild(fragment);
 }
 
-/* Wrong-course popup: triggers when a solver crashes due to a track mismatch 
-   (e.g., Language vs Government account mixup), catching error signatures 
-   like "reading 'id'" or "COURSE_MISMATCH" in the live activity feed. */
 function detectCourseMismatch(activity) {
   const start = Math.max(0, activity.length - 60);
   for (let i = activity.length - 1; i >= start; i--) {
     const line = String(activity[i] || '');
-    if (
-      line.includes('COURSE_MISMATCH') || 
-      line.includes("reading 'id'") || 
-      line.includes('basic_section') ||
-      line.includes('Cannot read properties of undefined') ||
-      line.includes('TypeError')
-    ) {
+    if (line.includes('COURSE_MISMATCH') || line.includes("reading 'id'") || line.includes('basic_section')) {
       if (mismatchHandled === line) return;
       mismatchHandled = line;
       solveJustStarted = false;
@@ -518,10 +508,15 @@ async function refreshProgress() {
 
   refreshing = true;
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+
     const response = await fetch(`${API_BASE}/api/progress?user=${encodeURIComponent(currentUser)}`, {
       cache: 'no-store',
-      signal: AbortSignal.timeout(15000),
+      signal: controller.signal,
     });
+    clearTimeout(timeoutId);
+
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || t('readProgressError'));
     if (progressFailures >= 10) setStatus('');
@@ -558,12 +553,17 @@ async function postSolve(payload) {
   let lastError;
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
+
       const response = await fetch(`${API_BASE}/api/solve`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
-        signal: AbortSignal.timeout(30000),
+        signal: controller.signal,
       });
+      clearTimeout(timeoutId);
+
       const data = await response.json();
       if ((response.status === 409 || response.status === 429) && data.user_key) {
         return { data, already: true };
