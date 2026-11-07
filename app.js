@@ -517,7 +517,16 @@ async function refreshProgress() {
     });
     clearTimeout(timeoutId);
 
-    const data = await response.json();
+    // التحقق الآمن من نوع الاستجابة لمنع خطأ JSON والـ HTML
+    const responseText = await response.text();
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch (e) {
+      console.warn("الخادم أرجع HTML بدلاً من JSON في التقدم:", responseText);
+      return;
+    }
+
     if (!response.ok) throw new Error(data.error || t('readProgressError'));
     if (progressFailures >= 10) setStatus('');
     progressFailures = 0;
@@ -564,7 +573,15 @@ async function postSolve(payload) {
       });
       clearTimeout(timeoutId);
 
-      const data = await response.json();
+      // التحقق الآمن من استجابة البدء
+      const responseText = await response.text();
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (e) {
+        throw new Error('الخادم أرجع استجابة غير صالحة (HTML). تحقق من حالة السيرفر أو الرابط.');
+      }
+
       if ((response.status === 409 || response.status === 429) && data.user_key) {
         return { data, already: true };
       }
