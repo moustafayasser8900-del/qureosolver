@@ -1,5 +1,5 @@
 // Frontend only. Language Schools = 100% English. Government = 100% Arabic.
-// Wrong-course ("undefined 'id'") detection is done HERE only — solvers untouched.
+// Wrong-course and crash detection ("undefined 'id'", "COURSE_MISMATCH") is handled here — solvers untouched.
 const API_BASE = new URLSearchParams(location.search).get('api')
   || localStorage.getItem('qureoApiBase')
   || '';
@@ -459,14 +459,20 @@ function renderChapters(chapters) {
   chaptersBox.appendChild(fragment);
 }
 
-/* Wrong-course popup: the solvers crash with "Cannot read properties of
-   undefined (reading 'id')" when the account is not enrolled in the selected
-   course (langs vs government mixup). Catch that signature in the live feed. */
+/* Wrong-course popup: triggers when a solver crashes due to a track mismatch 
+   (e.g., Language vs Government account mixup), catching error signatures 
+   like "reading 'id'" or "COURSE_MISMATCH" in the live activity feed. */
 function detectCourseMismatch(activity) {
   const start = Math.max(0, activity.length - 60);
   for (let i = activity.length - 1; i >= start; i--) {
     const line = String(activity[i] || '');
-    if (line.includes('COURSE_MISMATCH') || line.includes("reading 'id'") || line.includes('basic_section')) {
+    if (
+      line.includes('COURSE_MISMATCH') || 
+      line.includes("reading 'id'") || 
+      line.includes('basic_section') ||
+      line.includes('Cannot read properties of undefined') ||
+      line.includes('TypeError')
+    ) {
       if (mismatchHandled === line) return;
       mismatchHandled = line;
       solveJustStarted = false;
