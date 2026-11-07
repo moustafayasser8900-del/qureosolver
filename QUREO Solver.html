@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<!-- saved from url=(0029)https://beta.qureosolver.xyz/ -->
+<html lang="ar" dir="rtl"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#06070f">
+  <title>QUREO Solver</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com/">
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+  <link href="./QUREO Solver_files/css2" rel="stylesheet">
+  <link rel="stylesheet" href="./QUREO Solver_files/styles.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+  <div class="noise"></div>
+
+  <div id="join-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="join-title">
+    <div class="modal-card compact-card">
+      <div class="modal-kicker" data-i18n="joinKicker">خطوة واحدة سريعة</div>
+      <h2 id="join-title" data-i18n="joinTitle">تابع كل جديد</h2>
+      <p data-i18n="joinBody">تابع تحديثات الحل والكورسات الجديدة على تيليجرام، وبعدها كمل للمنصة.</p>
+      <a class="button button-primary full-width" href="https://t.me/qureosolver" target="_blank" rel="noopener"><span data-i18n="joinOpen">فتح تيليجرام</span> <span>↗</span></a>
+      <button id="joined-button" class="button button-secondary full-width" type="button" data-i18n="joinedButton">انضمت — متابعة</button>
+    </div>
+  </div>
+
+  <!-- STEP 0a: school type, made impossible to misread -->
+  <div id="category-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="category-title">
+    <div class="modal-card category-panel">
+      <div class="modal-kicker" data-i18n="categoryKicker">أهم خطوة — ظبطها صح</div>
+      <h2 id="category-title" data-i18n="categoryTitle">حسابك على كيريو بالعربي ولا بالإنجليزي؟</h2>
+      <p class="modal-intro" data-i18n="categoryIntro">دي أهم خطوة! لو حسابك بالعربي اختار «حكومي»، ولو بالإنجليزي اختار «لغات». الاختيار الغلط بيخلي الحل يقف من أوله.</p>
+      <div class="category-grid two-col">
+        <button class="category-option" id="category-government" type="button">
+          <span class="category-code">AR</span>
+          <span class="category-text"><strong data-i18n="govCard">حكومي</strong><small data-i18n="govCardDesc">حساب كيريو بالعربي — أولى وتانية بكالوريا</small></span>
+          <span class="category-arrow">→</span>
+        </button>
+        <button class="category-option" id="category-language" type="button">
+          <span class="category-code">EN</span>
+          <span class="category-text"><strong data-i18n="langCard">لغات</strong><small data-i18n="langCardDesc">حساب كيريو بالإنجليزي — جافاسكربت وبايثون وثقافة مالية</small></span>
+          <span class="category-arrow">→</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 0b: year (works for both tracks) -->
+  <div id="year-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="year-title">
+    <div class="modal-card compact-card">
+      <div class="modal-kicker" id="year-kicker">مدارس لغات</div>
+      <h2 id="year-title" data-i18n="yearTitle">اختار سنتك</h2>
+      <p id="year-body">سنتك بتحدد الكورس وعدد الفصول الصحيح.</p>
+      <div class="year-buttons">
+        <button class="year-choice" id="year-one" type="button"><strong id="year-one-title">أولى بكالوريا</strong><small id="year-one-desc">JavaScript · 42 فصل</small></button>
+        <button class="year-choice" id="year-two" type="button"><strong id="year-two-title">تانية بكالوريا</strong><small id="year-two-desc">JavaScript وPython وFinancial Literacy</small></button>
+      </div>
+      <button id="year-back" class="button button-ghost full-width" type="button" data-i18n="yearBack">رجوع لنوع المدرسة</button>
+    </div>
+  </div>
+
+  <!-- Wrong-course popup (frontend-detected solver crash) -->
+  <div id="mismatch-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="mismatch-title">
+    <div class="modal-card compact-card mismatch-card">
+      <div class="mismatch-icon">!</div>
+      <div class="modal-kicker" data-i18n="mismatchKicker">اختيار غير صحيح</div>
+      <h2 id="mismatch-title" data-i18n="mismatchTitle">انت اخترت لغات أو حكومي بالغلط 😅</h2>
+      <p data-i18n="mismatchBody">الحساب ده مش مشترك في الكورس اللي اخترته، عشان كده الحل وقف. راجع نوع مدرستك: حساب كيريو بالعربي = حكومي، بالإنجليزي = لغات. اختار مرة تانية وابدأ من جديد.</p>
+      <button id="mismatch-retry" class="button button-primary full-width" type="button" data-i18n="mismatchRetry">اختار مرة تانية</button>
+      <button id="mismatch-close" class="button button-ghost full-width" type="button" data-i18n="mismatchClose">إغلاق</button>
+    </div>
+  </div>
+
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="https://beta.qureosolver.xyz/" aria-label="QUREO Solver home"><span class="brand-symbol">Q</span><span><strong data-i18n="brandName">حل كيريو</strong><small data-i18n="brandSub">QUREO</small></span></a>
+      <a class="social-button telegram-link" href="https://t.me/qureosolver" target="_blank" rel="noopener">Telegram <span>↗</span></a>
+    </header>
+
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow"><span></span><b data-i18n="heroKicker">منصة واحدة. كل الكورسات.</b></div>
+        <h1><span data-i18n="heroLine1">اختارها. حلها.</span><br><em data-i18n="heroLine2">وتقدّم للأمام.</em></h1>
+        <p data-i18n="heroBody">حل سريع ودقيق للكورسات مع نشاط مباشر خاص بكل جلسة. من غير زحمة—بس الكورسات المناسبة لسنتك.</p>
+        <div class="hero-tags"><span data-i18n="tagActive">30 حل نشط</span><span data-i18n="tagQueue">طابور ذكي</span><span data-i18n="tagProgress">تقدم مباشر</span></div>
+      </div>
+      <div class="hero-visual" aria-hidden="true"><div class="visual-core">Q<span>READY</span></div></div>
+    </section>
+
+    <section class="layout">
+      <div class="panel login-panel">
+        <div class="panel-heading"><span class="section-number">01</span><div><h2 data-i18n="startTitle">ابدأ حل جديد</h2><p data-i18n="startSubtitle">أربع خطوات سريعة. والباقي علينا.</p></div></div>
+        <form id="solve-form">
+          <div class="wizard-step active" data-step="1">
+            <label data-i18n="courseLabel">اختار الكورس</label>
+            <button type="button" id="selection-pill" class="selection-pill" title="تغيير نوع المدرسة أو السنة">اختار نوع مدرستك وسنتك ✎</button>
+            <div id="course-cards" class="course-grid"></div>
+            <p id="course-desc" class="wizard-hint" data-i18n="courseDesc">هتظهر بس الكورسات المناسبة لسنتك. دوس على البطاقة اللي فوق لو عايز تغيّر نوع المدرسة أو السنة.</p>
+          </div>
+          <div class="wizard-step" data-step="2">
+            <label for="phone" data-i18n="phoneLabel">رقم الموبايل</label>
+            <input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="05xxxxxxxx" data-i18n-placeholder="phonePlaceholder">
+            <p class="wizard-hint" data-i18n="phoneHint">هنستخدمه بس لو احتجنا نتواصل معاك بخصوص جلستك.</p>
+          </div>
+          <div class="wizard-step" data-step="3">
+            <label for="code" data-i18n="codeLabel">كود الطالب</label>
+            <input id="code" name="code" type="text" autocomplete="one-time-code" placeholder="اكتب كود الطالب بتاع كيريو" data-i18n-placeholder="codePlaceholder">
+            <p class="wizard-hint" data-i18n="codeHint">كود الطالب المخصص لحسابك على كيريو.</p>
+          </div>
+          <div class="wizard-step" data-step="4">
+            <label for="password" data-i18n="passwordLabel">كلمة السر</label>
+            <input id="password" name="password" type="password" autocomplete="current-password" placeholder="اكتب كلمة سر كيريو" data-i18n-placeholder="passwordPlaceholder">
+            <p class="wizard-hint" data-i18n="passwordHint">بياناتك بتتستخدم بس لإكمال الكورس اللي اخترته.</p>
+            <p id="confirm-note" class="confirm-note"></p>
+          </div>
+          <div class="wizard-nav">
+            <span id="step-indicator" class="step-indicator">الخطوة 1 من 4</span>
+            <div class="wizard-actions">
+              <button id="btn-back" class="button button-ghost" type="button" style="display:none" data-i18n="backButton">رجوع</button>
+              <button id="btn-next" class="button button-primary" type="button"><span data-i18n="nextButton">التالي</span> <span>→</span></button>
+              <button id="start-button" class="button button-primary" type="submit" style="display:none"><span data-i18n="startButton">ابدأ الحل</span> <span>→</span></button>
+            </div>
+          </div>
+          <p id="status" class="status success" role="status" data-i18n="readyStatus">تم التفعيل. كمل من تحت.</p>
+        </form>
+        <div class="privacy-note"><span>●</span><b data-i18n="privacyNote">حل واحد نشط لكل جهاز</b></div>
+      </div>
+
+      <div class="panel progress-panel">
+        <div class="panel-heading progress-heading"><span class="section-number">02</span><div><h2 data-i18n="progressTitle">التقدم المباشر</h2><p data-i18n="progressSubtitle">تحديثات من جلستك الحالية بس.</p></div><span id="running-badge" class="running-badge" data-i18n="idle">متوقف</span></div>
+        <div class="stats">
+          <div class="stat"><strong id="completed-count">0</strong><span data-i18n="completedItems">عناصر مكتملة</span></div>
+          <div class="stat"><strong id="last-chapter">—</strong><span data-i18n="latestChapter">آخر فصل</span></div>
+          <div class="stat"><strong id="running" data-i18n="idle">متوقف</strong><span data-i18n="solverStatus">حالة الحل</span></div>
+        </div>
+        <div class="activity-section">
+          <div class="section-title"><h3><span class="live-dot"></span><b data-i18n="activityTitle">النشاط المباشر</b></h3><span id="activity-count">0 أحداث</span></div>
+          <div id="activity" class="activity" aria-live="polite"><div class="empty compact">نشاط جلستك هيظهر هنا.</div></div>
+        </div>
+        <div class="chapters-section">
+          <div class="section-title"><h3 data-i18n="chaptersTitle">الفصول</h3><span data-i18n="sessionOnly">جلستك بس</span></div>
+          <div id="chapters" class="chapters"><div class="empty">لسه مفيش تقدم للحساب ده.</div></div>
+        </div>
+      </div>
+    </section>
+    <footer><span data-i18n="brandFooter">حل كيريو</span><span data-i18n="footerTagline">انتظار أقل. تعلم أكتر.</span></footer>
+  </main>
+  <script src="./QUREO Solver_files/app.js.download"></script>
+<script type="module" src="./QUREO Solver_files/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon="{&quot;version&quot;:&quot;2024.11.0&quot;,&quot;token&quot;:&quot;6455538e37de43abaa217947621141b8&quot;,&quot;r&quot;:1,&quot;spa&quot;:2}" crossorigin="anonymous"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a56cd2aa39cf1221',t:'MTc5NDA1OTU5Mw=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a56cd2aa39cf1221',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><iframe height="1" width="1" style="position: absolute; top: 0px; left: 0px; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; visibility: hidden;" src="./QUREO Solver_files/saved_resource.html"></iframe>
+
+</body></html>
