@@ -72,6 +72,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!courseCards) return;
     courseCards.innerHTML = '';
     const list = COURSES[selectedTrack]?.[selectedYear] || COURSES.government.one;
+
+    // إصلاح: تعيين أول كورس تلقائياً من القائمة الجديدة إذا كان الكورس المحدد حالياً غير موجود فيها
+    if (!list.some((c) => c.key === selectedCourse)) {
+      selectedCourse = list[0]?.key || '';
+    }
+
     list.forEach((c) => {
       const btn = document.createElement('button');
       btn.type = 'button';
@@ -86,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // إغلاق وإخفاء كافة النوافذ المنسدلة الإجبارية التي تحجب الأزرار
+  // إغلاق وإخفاء كافة النوافذ المنسدلة الإجبارية
   [joinModal, categoryModal, yearModal, mismatchModal].forEach((m) => {
     if (m) m.classList.add('hidden');
   });
@@ -100,9 +106,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnNext) {
     btnNext.onclick = (e) => {
       e.preventDefault();
-      if (step === 1 && !selectedCourse) {
-        selectedCourse = 'js_fast_42';
-      }
       setStatus('');
       showStep(step + 1);
     };
