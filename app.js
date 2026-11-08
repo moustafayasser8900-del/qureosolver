@@ -1,5 +1,5 @@
 // Qureo Solver - Fixed Navigation & Button Handlers
-const API_BASE = "https://qureosolver-six.vercel.app";
+const API_BASE = window.API_BASE_URL || "https://qureosolver-six.vercel.app";
 
 const adminParams = new URLSearchParams(location.search);
 if (adminParams.get('admin')) localStorage.setItem('qureoAdmin', adminParams.get('admin'));
@@ -19,12 +19,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const stepIndicator = document.querySelector('#step-indicator');
   const btnNext = document.querySelector('#btn-next');
   const btnBack = document.querySelector('#btn-back');
+  
+  // Modals
   const joinModal = document.querySelector('#join-modal');
   const categoryModal = document.querySelector('#category-modal');
   const yearModal = document.querySelector('#year-modal');
   const mismatchModal = document.querySelector('#mismatch-modal');
+  
+  // Controls
   const selectionPill = document.querySelector('#selection-pill');
   const joinedButton = document.querySelector('#joined-button');
+  const yearBackBtn = document.querySelector('#year-back');
+  const mismatchRetryBtn = document.querySelector('#mismatch-retry');
+  const mismatchCloseBtn = document.querySelector('#mismatch-close');
 
   let selectedTrack = 'government';
   let selectedYear = 'one';
@@ -54,14 +61,40 @@ document.addEventListener('DOMContentLoaded', () => {
     if (statusBox) {
       statusBox.textContent = msg;
       statusBox.className = `status ${type}`;
+      statusBox.style.display = msg ? 'block' : 'none';
     }
+  }
+
+  function validateStep(currentStep) {
+    if (currentStep === 1) {
+      if (!selectedCourse) {
+        setStatus('يرجى اختيار الكورس أولاً', 'error');
+        return false;
+      }
+    } else if (currentStep === 2) {
+      const phone = document.querySelector('#phone')?.value.trim();
+      if (!phone) {
+        setStatus('يرجى إدخال رقم الموبايل', 'error');
+        return false;
+      }
+    } else if (currentStep === 3) {
+      const code = document.querySelector('#code')?.value.trim();
+      if (!code) {
+        setStatus('يرجى إدخال كود الطالب', 'error');
+        return false;
+      }
+    }
+    return true;
   }
 
   function showStep(n) {
     step = Math.min(Math.max(n, 1), 4);
     document.querySelectorAll('.wizard-step').forEach((el) => {
-      el.classList.toggle('active', Number(el.dataset.step) === step);
+      const isCurrentStep = Number(el.dataset.step) === step;
+      el.classList.toggle('active', isCurrentStep);
+      el.style.display = isCurrentStep ? 'block' : 'none';
     });
+
     if (stepIndicator) stepIndicator.textContent = `الخطوة ${step} من 4`;
     if (btnBack) btnBack.style.display = step === 1 ? 'none' : 'inline-block';
     if (btnNext) btnNext.style.display = step === 4 ? 'none' : 'inline-block';
@@ -90,35 +123,27 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       courseCards.appendChild(btn);
     });
+
+    // تحديث نص زر التعديل العلوي
+    if (selectionPill) {
+      const trackText = selectedTrack === 'government' ? 'حكومي' : 'لغات';
+      const yearText = selectedYear === 'one' ? 'أولى' : 'تانية';
+      selectionPill.textContent = `${trackText} - ${yearText} بكالوريا ✎`;
+    }
   }
 
-  // إغلاق كافة النوافذ المنسدلة عند البدء
-  [joinModal, categoryModal, yearModal, mismatchModal].forEach((m) => {
-    if (m) m.classList.add('hidden');
-  });
-
+  // --- إدارك التنقل بالنوافذ المنبثقة (Modals) ---
+  
+  // زر المتابعة بعد تيليجرام
   if (joinedButton) {
     joinedButton.addEventListener('click', (e) => {
       e.preventDefault();
       if (joinModal) joinModal.classList.add('hidden');
+      if (categoryModal) categoryModal.classList.remove('hidden');
     });
   }
 
-  if (btnNext) {
-    btnNext.addEventListener('click', (e) => {
-      e.preventDefault();
-      setStatus('');
-      showStep(step + 1);
-    });
-  }
-
-  if (btnBack) {
-    btnBack.addEventListener('click', (e) => {
-      e.preventDefault();
-      showStep(step - 1);
-    });
-  }
-
+  // زر تعديل نوع المدرسة والسنة
   if (selectionPill) {
     selectionPill.addEventListener('click', (e) => {
       e.preventDefault();
@@ -126,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ربط أزرار اختيار المسار (حكومي / لغات)
+  // اختيار المسار (حكومي / لغات)
   const categoryBtns = document.querySelectorAll('#category-government, #category-language');
   categoryBtns.forEach((b) => {
     b.addEventListener('click', (e) => {
@@ -137,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ربط أزرار اختيار السنة (الأولى / الثانية)
+  // اختيار السنة (الأولى / الثانية)
   const yearBtns = document.querySelectorAll('#year-one, #year-two');
   yearBtns.forEach((b) => {
     b.addEventListener('click', (e) => {
@@ -148,6 +173,52 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // زر الرجوع من السنة لنوع المدرسة
+  if (yearBackBtn) {
+    yearBackBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (yearModal) yearModal.classList.add('hidden');
+      if (categoryModal) categoryModal.classList.remove('hidden');
+    });
+  }
+
+  // أزرار نافذة الخطأ
+  if (mismatchRetryBtn) {
+    mismatchRetryBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (mismatchModal) mismatchModal.classList.add('hidden');
+      if (categoryModal) categoryModal.classList.remove('hidden');
+    });
+  }
+
+  if (mismatchCloseBtn) {
+    mismatchCloseBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (mismatchModal) mismatchModal.classList.add('hidden');
+    });
+  }
+
+  // --- التنقل في نموذج Wizard ---
+
+  if (btnNext) {
+    btnNext.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (validateStep(step)) {
+        setStatus('');
+        showStep(step + 1);
+      }
+    });
+  }
+
+  if (btnBack) {
+    btnBack.addEventListener('click', (e) => {
+      e.preventDefault();
+      setStatus('');
+      showStep(step - 1);
+    });
+  }
+
+  // إرسال البيانات
   if (form) {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -160,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      setStatus('جارٍ بدء الحل...');
+      setStatus('جارٍ بدء الحل...', '');
       try {
         const res = await fetch(`${API_BASE}/api/solve`, {
           method: 'POST',
@@ -174,7 +245,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'تعذر بدء الحل');
+        if (!res.ok) {
+          if (data.error && data.error.includes('mismatch')) {
+            if (mismatchModal) mismatchModal.classList.remove('hidden');
+          }
+          throw new Error(data.error || 'تعذر بدء الحل');
+        }
         setStatus('بدأ الحل بنجاح!', 'success');
       } catch (err) {
         setStatus(err.message, 'error');
@@ -182,6 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // تهيئة العرض البدائي
   renderCourses();
   showStep(1);
 });
