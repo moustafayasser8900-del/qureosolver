@@ -33,7 +33,7 @@
     <div class="modal-card category-panel">
       <div class="modal-kicker">أهم خطوة — ظبطها صح</div>
       <h2 id="category-title">حسابك على كيريو بالعربي ولا بالإنجليزي؟</h2>
-      <p class="modal-intro">دي أهم خطوة! لو حسابك بالعربي اختار «حكومي»، ولو بالإنجليزي اختار «لغات». الاختيار الغلط بيخلي الحل يقف من أوله.</p>
+      <p class="modal-intro">دي أهم خطوة! لو حسابك بالعربي اختار «حكومي»، ولو بالإنجليزي اختار «لغات». الاختيار الغلط بيخلي الحل وقف من أوله.</p>
       <div class="category-grid two-col">
         <button class="category-option" id="category-government" type="button">
           <span class="category-code">AR</span>
@@ -81,85 +81,4 @@
         <span class="brand-symbol">Q</span>
         <span><strong>حل كيريو</strong><small>QUREO</small></span>
       </a>
-      <a class="social-button telegram-link" href="https://t.me/qureosolver" target="_blank" rel="noopener">Telegram <span>↗</span></a>
-    </header>
-
-    <section class="hero">
-      <div class="hero-copy">
-        <div class="eyebrow"><span></span><b>منصة واحدة. كل الكورسات.</b></div>
-        <h1><span>اختارها. حلها.</span><br><em>وتقدّم للأمام.</em></h1>
-        <p>حل سريع ودقيق للكورسات مع نشاط مباشر خاص بكل جلسة. من غير زحمة—بس الكورسات المناسبة لسنتك.</p>
-        <div class="hero-tags"><span>30 حل نشط</span><span>طابور ذكي</span><span>تقدم مباشر</span></div>
-      </div>
-      <div class="hero-visual" aria-hidden="true"><div class="visual-core">Q<span>READY</span></div></div>
-    </section>
-
-    <section class="layout">
-      <div class="panel login-panel">
-        <div class="panel-heading">
-          <span class="section-number">01</span>
-          <div><h2>ابدأ حل جديد</h2><p>أربع خطوات سريعة. والباقي علينا.</p></div>
-        </div>
-        <form id="solve-form">
-          <div class="wizard-step active" data-step="1">
-            <label>اختار الكورس</label>
-            <button type="button" id="selection-pill" class="selection-pill" title="تغيير نوع المدرسة أو السنة">اختار نوع مدرستك وسنتك ✎</button>
-            <div id="course-cards" class="course-grid"></div>
-            <p id="course-desc" class="wizard-hint">هتظهر بس الكورسات المناسبة لسنتك. دوس على البطاقة اللي فوق لو عايز تغيّر نوع المدرسة أو السنة.</p>
-          </div>
-          <div class="wizard-step" data-step="2">
-            <label for="phone">رقم الموبايل</label>
-            <input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="05xxxxxxxx">
-            <p class="wizard-hint">هنستخدمه بس لو احتجنا نتواصل معاك بخصوص جلستك.</p>
-          </div>
-          <div class="wizard-step" data-step="3">
-            <label for="code">كود الطالب</label>
-            <input id="code" name="code" type="text" autocomplete="one-time-code" placeholder="اكتب كود الطالب بتاع كيريو">
-            <p class="wizard-hint">كود الطالب المخصص لحسابك على كيريو.</p>
-          </div>
-          <div class="wizard-step" data-step="4">
-            <label for="password">كلمة السر</label>
-            <input id="password" name="password" type="password" autocomplete="current-password" placeholder="اكتب كلمة سر كيريو">
-            <p class="wizard-hint">بياناتك بتتستخدم بس لإكمال الكورس اللي اخترته.</p>
-            <p id="confirm-note" class="confirm-note"></p>
-          </div>
-          <div class="wizard-nav">
-            <span id="step-indicator" class="step-indicator">الخطوة 1 من 4</span>
-            <div class="wizard-actions">
-              <button id="btn-back" class="button button-ghost" type="button" style="display:none">رجوع</button>
-              <button id="btn-next" class="button button-primary" type="button"><span>التالي</span> <span>→</span></button>
-              <button id="start-button" class="button button-primary" type="submit" style="display:none"><span>ابدأ الحل</span> <span>→</span></button>
-            </div>
-          </div>
-          <p id="status" class="status success" role="status">تم التفعيل. كمل من تحت.</p>
-        </form>
-        <div class="privacy-note"><span>●</span><b>حل واحد نشط لكل جهاز</b></div>
-      </div>
-
-      <div class="panel progress-panel">
-        <div class="panel-heading progress-heading">
-          <span class="section-number">02</span>
-          <div><h2>التقدم المباشر</h2><p>تحديثات من جلستك الحالية بس.</p></div>
-          <span id="running-badge" class="running-badge">متوقف</span>
-        </div>
-        <div class="stats">
-          <div class="stat"><strong id="completed-count">0</strong><span>عناصر مكتملة</span></div>
-          <div class="stat"><strong id="last-chapter">—</strong><span>آخر فصل</span></div>
-          <div class="stat"><strong id="running">متوقف</strong><span>حالة الحل</span></div>
-        </div>
-        <div class="activity-section">
-          <div class="section-title"><h3><span class="live-dot"></span><b>النشاط المباشر</b></h3><span id="activity-count">0 أحداث</span></div>
-          <div id="activity" class="activity" aria-live="polite"><div class="empty compact">نشاط جلستك هيظهر هنا.</div></div>
-        </div>
-        <div class="chapters-section">
-          <div class="section-title"><h3>الفصول</h3><span>جلستك بس</span></div>
-          <div id="chapters" class="chapters"><div class="empty">لسه مفيش تقدم للحساب ده.</div></div>
-        </div>
-      </div>
-    </section>
-    <footer><span>حل كيريو</span><span>انتظار أقل. تعلم أكتر.</span></footer>
-  </main>
-  
-  <script src="app.js"></script>
-</body>
-</html>
+      <a class="
